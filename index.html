@@ -124,10 +124,14 @@
       for (const keyword in keywords) {
         if (transcript.includes(keyword)) {
           recognizedKeyword = keyword;
-          const url = arduinoIP + keywords[keyword];
+          const url = `${arduinoIP}${keywords[keyword]}`;
           console.log(`Fetching URL: ${url}`);
 
-          fetch(url, { mode: 'no-cors' })
+          fetch(url, { 
+            method: 'GET', 
+            mode: 'cors', 
+            headers: { 'Content-Type': 'text/plain' } 
+          })
             .then(response => console.log(`Sent command: ${keywords[keyword]}`))
             .catch(error => console.error('Error sending command:', error));
           break;
