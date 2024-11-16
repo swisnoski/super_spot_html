@@ -92,14 +92,22 @@
       left: '/left',
       right: '/right',
       fast: '/fast',
-      slow: '/slow'
+      slow: '/slow',
+      heel: '/heel'
     };
 
     const arduinoIP = 'http://172.20.10.14'; // Replace with Arduino's IP address
 
     function startListening() {
       document.getElementById('status').innerText = "Listening...";
-      recognition.start();
+      
+      // This will explicitly request permission to use the microphone
+      try {
+        recognition.start();
+      } catch (error) {
+        console.error("Speech recognition error:", error);
+        document.getElementById('status').innerText = "Error occurred";
+      }
     }
 
     function stopListening() {
