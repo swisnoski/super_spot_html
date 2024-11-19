@@ -86,24 +86,23 @@
     recognition.continuous = true;
 
     const keywords = {
-      forward: '/on',
-      reverse: '/backward',
-      stop: '/off',
-      left: '/left',
-      right: '/right',
-      fast: '/fast',
-      slow: '/slow',
-      heel: '/heel',
-      heal: '/heel',
-      test: '/test'
+      forward: 'on',
+      reverse: 'backward',
+      stop: 'off',
+      left: 'left',
+      right: 'right',
+      fast: 'fast',
+      slow: 'slow',
+      heel: 'heel',
+      heal: 'heel',
+      test: 'test'
     };
 
-    const arduinoIP = 'https://172.20.10.14'; // Replace with Arduino's IP address
+    const backendURL = 'http://<backend-ip>:5000'; // Replace <backend-ip> with your Python server's IP
 
     function startListening() {
       document.getElementById('status').innerText = "Listening...";
       
-      // This will explicitly request permission to use the microphone
       try {
         recognition.start();
       } catch (error) {
@@ -125,15 +124,16 @@
       for (const keyword in keywords) {
         if (transcript.includes(keyword)) {
           recognizedKeyword = keyword;
-          const url = `${arduinoIP}${keywords[keyword]}`;
-          console.log(`Fetching URL: ${url}`);
+          const command = keywords[keyword];
+          console.log(`Sending command: ${command}`);
 
-          fetch(url, { 
-            method: 'GET', 
-            mode: 'cors', 
-            headers: { 'Content-Type': 'text/plain' } 
+          fetch(`${backendURL}/command`, { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ command: command })
           })
-            .then(response => console.log(`Sent command: ${keywords[keyword]}`))
+            .then(response => response.json())
+            .then(data => console.log(`Response from server:`, data))
             .catch(error => console.error('Error sending command:', error));
           break;
         }
